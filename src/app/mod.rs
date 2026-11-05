@@ -973,6 +973,11 @@ impl App {
                         .layouter(&mut layouter)
                         .show(ui);
                     changed |= out.response.changed();
+                    // phone keyboards type “smart” quotes; code needs straight ones
+                    // (one character for one, so the cursor stays put)
+                    if out.response.changed() && doc.src.contains(['“', '”', '„', '‘', '’']) {
+                        doc.src = doc.src.replace(['“', '”', '„'], "\"").replace(['‘', '’'], "'");
+                    }
                     let galley = out.galley.clone();
                     let origin = out.galley_pos;
                     let rect_of = |src: &str, r: &Range<usize>| -> Rect {
@@ -1361,7 +1366,8 @@ impl App {
         let show_chrome = !self.focus || recently || !self.playing;
         if show_chrome {
             self.transport(&ctx, rect);
-            if !self.sliders().is_empty() || self.uses_view() {
+            // a short picture (a phone with the keyboard up) keeps room for the controls
+            if (!self.sliders().is_empty() || self.uses_view()) && rect.height() >= 260.0 {
                 self.params_card(&ctx, rect);
             }
         }
@@ -1630,11 +1636,13 @@ impl eframe::App for App {
 
         let screen = ctx.content_rect();
         if !self.focus && screen.width() < NARROW {
-            // phones: the picture on top, the code below
-            egui::Panel::bottom("editor-pane-narrow")
-                .resizable(true)
-                .default_size(screen.height() * 0.5)
-                .size_range(140.0..=screen.height() * 0.8)
+            // phones: the code on top, the picture below. The keyboard and in-app
+            // browser toolbars cover the bottom of the screen, never the top. With the
+            // keyboard up (a short screen), the code gets more of what's left.
+            let share = if screen.height() < 560.0 { 0.62 } else { 0.48 };
+            egui::Panel::top("editor-pane-narrow")
+                .resizable(false)
+                .exact_size((screen.height() * share).round())
                 .frame(
                     egui::Frame::new()
                         .fill(PAPER)

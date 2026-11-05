@@ -32,7 +32,7 @@ Everything in the editor works the same, with a few differences:
 - ⌘E downloads a PNG.
 - **share** (⌘⇧C) copies a link with the sketch inside it, so whoever opens it sees exactly what you made.
 - `image()` needs the desktop app, because it reads files.
-- On a phone the picture sits above the code; tap the picture to bring back its controls, and **focus** shows the picture alone.
+- On a phone the code sits on top and the picture below, and the page shrinks to fit above the keyboard (and in-app browser toolbars, like X's). Autocorrect is off, and smart quotes become straight ones. Tap the picture to bring back its controls; **focus** shows the picture alone.
 
 ```bash
 web/build.sh     # → web/dist (release wasm, wasm-bindgen, wasm-opt -O3)
