@@ -185,6 +185,8 @@ struct App {
 }
 
 const EDITOR_ID: &str = "monet-editor";
+/// The sketch a first visit opens on.
+const DEFAULT_SKETCH: &str = "kali";
 /// Below this width (points), the editor goes under the picture instead of beside it.
 const NARROW: f32 = 720.0;
 /// Marks that the one-time reset of the saved UI zoom has run (a promo recording
@@ -254,6 +256,8 @@ impl App {
         } else {
             get(&format!("{STORE}/active"))
                 .and_then(|n| docs.iter().position(|d| d.name == n))
+                // first visit: open on kali
+                .or_else(|| docs.iter().position(|d| d.name == DEFAULT_SKETCH))
                 .unwrap_or(0)
         };
 
