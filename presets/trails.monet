@@ -1,0 +1,8 @@
+// trails · leaded cells through a kaleidoscope; feedback smears the spin.
+
+cells("dusk", 4, 2.5)
+  .kaleido(6)
+  .spin(.08)
+  .trail(.9)
+  .edges(.6)
+  .glow(.35)

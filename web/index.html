@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>monet · a shader REPL</title>
+  <meta name="description" content="A live-coding shader REPL for making beautiful designs. Type a chain, see light. Rust compiled to WebAssembly, drawing with WebGPU.">
+  <meta name="theme-color" content="#fbf9f5">
+  <link rel="icon" type="image/png" href="icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://monet.hunterharloff.com/">
+  <meta property="og:title" content="monet · a shader REPL">
+  <meta property="og:description" content="Live-code beautiful designs. Rust, compiled to WebAssembly, on WebGPU.">
+  <meta property="og:image" content="https://monet.hunterharloff.com/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="monet · a shader REPL">
+  <meta name="twitter:description" content="Live-code beautiful designs. Rust, compiled to WebAssembly, on WebGPU.">
+  <meta name="twitter:image" content="https://monet.hunterharloff.com/og.jpg">
+  <link rel="modulepreload" href="monet.js">
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #fbf9f5; }
+    /* eframe sizes the canvas to its CSS box */
+    #monet { position: fixed; inset: 0; width: 100%; height: 100%; outline: none; }
+    #status {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: 32px; box-sizing: border-box; text-align: center; pointer-events: none;
+      font: 15px/1.5 ui-monospace, "SF Mono", Menlo, monospace; color: #8e887d;
+      opacity: 0; transition: opacity .3s;
+    }
+    #status.shown { opacity: 1; }
+    #status b { color: #2a2926; font-weight: 400; }
+  </style>
+</head>
+<body>
+  <canvas id="monet"></canvas>
+  <div id="status" class="shown"><span><b>monet</b> · warming up the GPU…</span></div>
+  <noscript><p style="font-family: monospace; padding: 32px">monet needs JavaScript and WebAssembly.</p></noscript>
+  <script type="module">
+    import init from "./monet.js";
+    init().catch((e) => {
+      // `start` reports its own errors; this is for the module failing to load at all
+      if (String(e).includes("Using exceptions for control flow")) return;
+      const s = document.getElementById("status");
+      s.textContent = "monet couldn't load: " + e;
+      s.className = "shown";
+    });
+  </script>
+</body>
+</html>

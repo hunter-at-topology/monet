@@ -1,0 +1,2 @@
+view(-0.7453, 0.1127, 180)
+mandelbrot("mono", 600, 2, 1.6).stipple("riso", 1, 1.2)

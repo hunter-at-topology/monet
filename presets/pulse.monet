@@ -1,0 +1,10 @@
+// pulse · patterns drive everything: each step glides in.
+// Watch the playing step light up in the code.
+
+speed(.5)
+stripes("<dawn ember lagoon candy>", 9, 0, .3)
+  .kaleido("<6 8 5>")
+  .zoom("1 1.4 1.15 2")
+  .ripple("0 .4 .2 .8", 6)
+  .bloom(.25, .8)
+  .vignette(.35)

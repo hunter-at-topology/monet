@@ -1,0 +1,5 @@
+// waves · stacked paper-cut layers, lit like a relief.
+
+waves("dusk", 9, slider(1.4, 0, 3))
+  .relief(.7, 100)
+  .grain(.05)

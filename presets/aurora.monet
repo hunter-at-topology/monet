@@ -1,0 +1,6 @@
+// aurora · curtains of light behind reeded glass; the palette turns every 4 cycles.
+
+aurora("<lagoon dusk>/4", .8)
+  .reeded(40, .5)
+  .bloom(.35, .5)
+stars(.8).blend("screen")

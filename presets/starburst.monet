@@ -1,0 +1,4 @@
+// starburst · ink rays tipped with dots, slowly turning.
+
+solid("#f2efe9").grain(.04)
+rays("atom", 80, 1.1)

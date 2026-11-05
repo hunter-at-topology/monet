@@ -1,0 +1,6 @@
+// bokeh · city lights, out of focus.
+
+bokeh("dusk", 44, 1.2)
+  .blur(.08)
+  .chroma(.25)
+  .grain(.04)

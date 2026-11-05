@@ -1,0 +1,2 @@
+solid("#0e0d10")
+kali("ember", .58, .74).glow(.3).mask("ring", .32, .002)

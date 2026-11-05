@@ -1,0 +1,2 @@
+solid("#1b2fb2").grain(.06)
+orbits("#f1ece1 #f1ece1 #e5432a", 9, 1.6).zoom(.85)

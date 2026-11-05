@@ -1,0 +1,2 @@
+solid("#e5432a").grain(.06)
+rays("#f1ece1 #f1ece1 #1b2fb2 #f1ece1", 96, 1).zoom(.85)

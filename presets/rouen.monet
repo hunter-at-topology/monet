@@ -1,0 +1,6 @@
+// rouen · the cathedral series was about light, not stone: a mesh of Rouen's
+// morning colours, painted.
+
+mesh("rouen", .6)
+  .brush(.8, .6)
+  .canvas(.5)

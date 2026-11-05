@@ -1,0 +1,5 @@
+// poppies · Coquelicots: a summer meadow under a pale sky, the wind in the grass.
+
+poppies("poppy", 1.2, .8)
+  .brush(1, .3)
+  .canvas(.6)

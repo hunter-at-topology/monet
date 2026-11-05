@@ -1,0 +1,4 @@
+// morph · the power of z^p + c breathes from 2 to 6: a multibrot that grows petals.
+
+view(0, 0, .42)
+mandelbrot("lagoon", 160, sine.range(2, 6).slow(16), 1.4)

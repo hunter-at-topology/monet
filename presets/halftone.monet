@@ -1,0 +1,5 @@
+// halftone · swirling rings, printed.
+
+rings("ember", 6, .6)
+  .swirl(sine.range(-1.2, 1.2).slow(4), .8)
+  .halftone(9, 30)

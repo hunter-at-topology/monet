@@ -1,0 +1,7 @@
+// lacquer · clouds, posterized into terraces, then lit like carved lacquer.
+
+clouds("ember", 2.2, .5)
+  .warp(.5, 1.5)
+  .posterize(7)
+  .relief(.9, 120)
+  .vignette(.4)

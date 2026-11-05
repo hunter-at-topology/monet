@@ -1,0 +1,6 @@
+// pool · caustics on a pool floor. Move the mouse to stir the water:
+// a soft spot leaves a fading trail, and the light bends around it.
+
+caustics("lagoon", 1.1)
+  .displace(spot(.2).trail(.97).blur(.5), .8)
+  .bloom(.3, .75)

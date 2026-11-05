@@ -1,0 +1,4 @@
+// kali · Kali's lace: p ← |p|/|p|² − c, with c drifting.
+
+kali("ember", sine.range(.5, .6).slow(16), .75)
+  .glow(.4)

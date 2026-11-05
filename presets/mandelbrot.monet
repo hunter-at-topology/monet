@@ -1,0 +1,3 @@
+// mandelbrot · drag to pan, scroll to zoom, double-click to go home.
+
+mandelbrot("fire", slider(300, 32, 2000))

@@ -1,0 +1,6 @@
+// dawn · mesh gradient, softly flowing, with film grain.
+// ⌥-drag any number to scrub it.
+
+mesh("dawn", 1.2)
+  .flow(.25)
+  .grain(.05)

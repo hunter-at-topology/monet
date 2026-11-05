@@ -1,0 +1,6 @@
+// tunnel · the meadow inside itself, falling forever, tiles shuffling.
+
+poppies("poppy", 1.3)
+  .shuffle(5, .35, .25)
+  .droste(.68, .08)
+  .grain(.05)

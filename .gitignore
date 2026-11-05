@@ -1,0 +1,8 @@
+/target
+# video renders, clips and licensed fonts used for the promo film
+/promo/
+/monet-collage.png
+/web/dist/
+/web/.vercel/
+/.claude/
+.DS_Store

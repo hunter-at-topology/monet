@@ -1,0 +1,6 @@
+// sunrise · Impression, Sunrise: Le Havre in the haze, an orange sun, its broken
+// reflection, a rower or two. Try .brush(1.6, .8) for looser paint.
+
+sunrise("harbour", 1, slider(1, 0, 2))
+  .brush(.8, .2, 0)
+  .canvas(.6)

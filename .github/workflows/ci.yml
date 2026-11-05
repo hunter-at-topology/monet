@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # macOS: eframe is built without X11/Wayland, and the GPU tests can use Metal
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain (pinned in rust-toolchain.toml)
+        run: rustup show && rustup target add wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo clippy --target wasm32-unknown-unknown -- -D warnings
+
+  deploy:
+    # every push to main ships the browser build to monet.hunterharloff.com
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: macos-14
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: rustup show && rustup target add wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli@0.2.130
+      - run: brew install binaryen
+      - run: web/build.sh
+      - name: Deploy to Vercel
+        if: env.VERCEL_TOKEN != ''
+        working-directory: web/dist
+        run: |
+          cp ../vercel.json .
+          npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN"

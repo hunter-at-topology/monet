@@ -1,0 +1,6 @@
+// silk · folds lit from above; the hue drifts on a slow sine.
+
+silk("candy", .6)
+  .hue(sine.range(-20, 20).slow(8))
+  .relief(.8)
+  .grain(.03)

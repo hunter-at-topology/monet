@@ -1,0 +1,4 @@
+// newton · which root does Newton's method find from each point?
+
+newton("candy", "<3 4 5>")
+  .grain(.03)

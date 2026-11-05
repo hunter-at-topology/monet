@@ -1,0 +1,6 @@
+// impression · clouds, bent and painted. Swap "monet" for any palette.
+
+clouds("monet", 3.5, .6)
+  .warp(.35, 2.5)
+  .brush(1.1, .7)
+  .canvas(.5)

@@ -1,0 +1,6 @@
+// riviera · soft blobs of colour, ordered-dithered into a tiny palette.
+
+blobs("riviera", 6, 1.1)
+  .flow(.18, .6)
+  .pixelate(4)
+  .dither("riviera", 4, .25)

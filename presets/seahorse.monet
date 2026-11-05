@@ -1,0 +1,5 @@
+// seahorse · deep in the valley between the cardioid and the big bulb.
+// The light rims are a distance estimate: the set's edge, glowing.
+
+view(-0.7453, 0.1127, 180)
+mandelbrot("dusk", slider(600, 100, 3000), 2, 2.2)

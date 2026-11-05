@@ -1,0 +1,5 @@
+// stained · drifting glass cells, leaded and glowing.
+
+cells("monet", 7, .6)
+  .edges(1)
+  .glow(.35, .4)

@@ -1,0 +1,1 @@
+stripes("#e5432a #f1ece1", 22, 0, .2).swirl(1.6, .75).grain(.05)

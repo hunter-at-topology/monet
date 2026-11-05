@@ -1,0 +1,4 @@
+// ascii · plasma, typed out.
+
+plasma("dusk", 1.2, .7)
+  .ascii(11)

@@ -1,0 +1,3 @@
+// tricorn · the Mandelbar, z ← conj(z)² + c.
+
+tricorn("ember", 300, 1.4)

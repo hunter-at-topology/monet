@@ -1,0 +1,5 @@
+// reeded · a mesh gradient seen through fluted glass.
+
+mesh("dawn", 1.4)
+  .reeded(slider(18, 4, 60), .7)
+  .grain(.04)

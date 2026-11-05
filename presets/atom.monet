@@ -1,0 +1,4 @@
+// atom · hand-drawn orbits on raw canvas (after album-cover explorations).
+
+solid("#d9d6d0").canvas(.8)
+orbits("atom", 9, slider(1.6, .5, 4))

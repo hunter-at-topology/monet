@@ -1,0 +1,4 @@
+// glints · late sun on open water. Drag on the canvas to make ripples.
+
+water("sunlit", slider(1, 0, 3), .8)
+glints(.5, .8).blend("add")

@@ -1,0 +1,5 @@
+// lens · a soft spot follows the mouse and bends the stripes around it.
+
+stripes("citrus", 18, 30, .2)
+  .displace(spot(.3).blur(.6), .7)
+  .grain(.03)

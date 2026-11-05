@@ -1,0 +1,7 @@
+// riso · engraved peonies, printed in cobalt; two cards laid on top.
+// `stipple` is the grain of a riso print: try it on anything, even image("photo.jpg").
+// `.place(x, y, w, h, radius, border)` puts any picture in a card.
+
+peonies("mono", 1).stipple("cobalt", 1, slider(1.25, .5, 3))
+sun("mono", .2).place(.1, .42, .2, .16, .012).stipple("vermilion", 1, 1.4)
+grid("graph", 8).place(.1, .04, .2, .37, .012, 2)

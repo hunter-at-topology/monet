@@ -1,0 +1,6 @@
+// mosaic · a painted poppy field cut into tiles; some swap places every two cycles.
+
+poppies("poppy", 1.4)
+  .shuffle(6, .35, .5)
+  .brush(.7, .3)
+  .grain(.05)
