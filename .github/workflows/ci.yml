@@ -14,7 +14,7 @@ jobs:
     # macOS: eframe is built without X11/Wayland, and the GPU tests can use Metal
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Toolchain (pinned in rust-toolchain.toml)
         run: rustup show && rustup target add wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
@@ -32,7 +32,7 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Toolchain
         run: rustup show && rustup target add wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
