@@ -185,6 +185,8 @@ struct App {
 }
 
 const EDITOR_ID: &str = "monet-editor";
+/// Below this width (points), the editor goes under the picture instead of beside it.
+const NARROW: f32 = 720.0;
 /// Marks that the one-time reset of the saved UI zoom has run (a promo recording
 /// once left 1.5× saved); ⌘+ / ⌘− / ⌘0 zoom choices after it are kept.
 const ZOOM_RESET: &str = "ui/zoom-reset-1";
@@ -276,8 +278,7 @@ impl App {
             fps: 60.0,
             scale: 1,
             mouse: [0.5, 0.5],
-            // phones open on the picture alone (the editor is a tap away)
-            focus: std::env::var_os("MONET_FOCUS").is_some() || narrow_screen(),
+            focus: std::env::var_os("MONET_FOCUS").is_some(),
             last_pointer_move: Instant::now(),
             params_open: true,
             menu_open: false,
@@ -602,10 +603,16 @@ impl App {
     // ── editor pane ──────────────────────────────────────────────────────────
 
     fn editor_pane(&mut self, ui: &mut Ui) {
+        // room for the macOS window buttons, which only the desktop app's side pane has
+        let left = if cfg!(target_arch = "wasm32") || ui.ctx().content_rect().width() < NARROW {
+            16
+        } else {
+            80
+        };
         egui::Panel::top("header")
             .exact_size(46.0)
             .frame(egui::Frame::new().fill(PAPER).inner_margin(egui::Margin {
-                left: 80,
+                left,
                 right: 16,
                 top: 0,
                 bottom: 0,
@@ -1356,7 +1363,12 @@ impl App {
     }
 
     fn interact(&mut self, ctx: &egui::Context, resp: &egui::Response, rect: Rect) {
-        if resp.hovered() && ctx.input(|i| i.pointer.delta() != Vec2::ZERO) {
+        // moving the mouse, or a tap or touch (no movement), brings the controls back
+        if resp.hovered() && ctx.input(|i| i.pointer.delta() != Vec2::ZERO)
+            || resp.is_pointer_button_down_on()
+            || resp.clicked()
+            || (resp.contains_pointer() && ctx.input(|i| i.any_touches()))
+        {
             self.last_pointer_move = Instant::now();
         }
         let aspect = rect.width() / rect.height();
@@ -1413,7 +1425,8 @@ impl App {
             .show(ctx, |ui| {
                 pill().show(ui, |ui| {
                     ui.horizontal_centered(|ui| {
-                        ui.spacing_mut().item_spacing.x = 12.0;
+                        let compact = rect.width() < 460.0;
+                        ui.spacing_mut().item_spacing.x = if compact { 10.0 } else { 12.0 };
                         if text_button(ui, if self.playing { "pause" } else { "play" }, INK)
                             .clicked()
                         {
@@ -1421,6 +1434,7 @@ impl App {
                         }
                         // the cycle: whole cycles · a dot per quarter
                         let c = self.cycle.max(0.0);
+                        if !compact {
                         let beat = ((c.fract() * 4.0) as usize).min(3);
                         let dots: String =
                             (0..4).map(|i| if i == beat { '●' } else { '·' }).collect();
@@ -1437,6 +1451,9 @@ impl App {
                         {
                             self.restart();
                         }
+                        }
+                        // phones: no room for pixel sizes (⌘1–⌘4 has no keyboard there anyway)
+                        if !compact {
                         divider(ui);
                         for s in [1u32, 2, 4, 8] {
                             let c = if self.scale == s { INK } else { FAINT };
@@ -1446,6 +1463,7 @@ impl App {
                             {
                                 self.scale = s;
                             }
+                        }
                         }
                         divider(ui);
                         if text_button(ui, "png", MUTED)
@@ -1483,7 +1501,10 @@ impl App {
             .fixed_pos(rect.right_top() + vec2(-16.0, 16.0))
             .show(ctx, |ui| {
                 card().show(ui, |ui| {
-                    ui.set_width(250.0);
+                    // fits a phone: never wider than most of the picture
+                    let w = 250.0f32.min(rect.width() - 64.0).max(120.0);
+                    ui.set_width(w);
+                    ui.spacing_mut().slider_width = w - 28.0;
                     ui.horizontal(|ui| {
                         let label = if self.params_open {
                             "sliders"
@@ -1589,8 +1610,21 @@ impl eframe::App for App {
         self.poll_file();
         self.tick();
 
-        if !self.focus {
-            let width = ctx.content_rect().width();
+        let screen = ctx.content_rect();
+        if !self.focus && screen.width() < NARROW {
+            // phones: the picture on top, the code below
+            egui::Panel::bottom("editor-pane-narrow")
+                .resizable(true)
+                .default_size(screen.height() * 0.5)
+                .size_range(140.0..=screen.height() * 0.8)
+                .frame(
+                    egui::Frame::new()
+                        .fill(PAPER)
+                        .stroke(Stroke::new(1.0, LINE)),
+                )
+                .show(ui, |ui| self.editor_pane(ui));
+        } else if !self.focus {
+            let width = screen.width();
             // "editor-pane": a fresh id drops a width saved under the old 1.5× zoom
             egui::Panel::left("editor-pane")
                 .resizable(true)
@@ -1603,7 +1637,7 @@ impl eframe::App for App {
                 )
                 .show(ui, |ui| self.editor_pane(ui));
         }
-        let margin = if self.focus { 0 } else { 18 };
+        let margin = if self.focus { 0 } else if screen.width() < NARROW { 8 } else { 18 };
         egui::CentralPanel::default()
             .frame(
                 egui::Frame::new()
@@ -1680,19 +1714,6 @@ fn fmt_zoom(z: f32) -> String {
     } else {
         format!("{z:.2}")
     }
-}
-
-/// A phone-sized browser window.
-fn narrow_screen() -> bool {
-    #[cfg(target_arch = "wasm32")]
-    {
-        web_sys::window()
-            .and_then(|w| w.inner_width().ok())
-            .and_then(|w| w.as_f64())
-            .is_some_and(|w| w < 720.0)
-    }
-    #[cfg(not(target_arch = "wasm32"))]
-    false
 }
 
 #[cfg(not(target_arch = "wasm32"))]
