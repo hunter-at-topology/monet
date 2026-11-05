@@ -52,7 +52,7 @@ Give the sketch in a code block, then a link that opens it:
 
     {SITE}/#s=<the sketch as UTF-8, URL-safe base64 without padding>
 
-To make the link, run:
+To make the link (any base64url encoder works; a trailing newline is fine), run:
 
     python3 -c \"import base64,sys; print('{SITE}/#s=' + base64.urlsafe_b64encode(sys.stdin.read().encode()).decode().rstrip('='))\" < sketch.monet
 
@@ -73,15 +73,21 @@ glints().blend(\"add\")        // a second layer, added on top
 - **Palettes** are a name (`\"dawn\"`), your own colours (`\"#f4a7b9 #a8c8f0\"`, up to 8), or a pattern that crossfades (`\"<dawn ember>\"`).
 - **Variables:** `w = sine.range(0, 1)`, `p = mesh(\"dawn\").flow()`, `ink = \"#1d3fbb #f4efe6\"`; then use `w`, `p`, `ink`.
 - **Pictures as arguments:** some effects take a picture, with its own chain: `displace(clouds(), .2)`, `mask(spot(.3).blur())`.
-- `stack(a, b, …)` groups layers; `speed(cps)` sets cycles per second (default 0.5); `view(x, y, zoom)` sets where fractals start.
-- Fractals (`mandelbrot`, `julia`, `kali`, …) live on a plane you can drag and scroll; set the start with `view()`.
+- **Effects belong to their layer.** `.grain()` at the end of the second line textures that layer only; there is no whole-scene effect (a chain can't follow `stack()`). To finish everything, put the texture on each layer, or build the scene as one layer: a picture can take others as arguments (`displace`, `mask`) or be written in WGSL.
+- **Layers cover what's below** unless they're transparent by nature (`stars`, `glints`, `orbits`, `rays`, `spot` and friends) or you give them `.blend(\"screen\")`, `.blend(\"multiply\")`, `.opacity(.5)` or a `.mask(…)`.
+- `stack(a, b, …)` groups layers; `speed(cps)` sets cycles per second for the whole sketch (default 0.5). Signals, patterns and `.slow()` all count in cycles, so `speed()` scales them all.
+- **Fractals** (`mandelbrot`, `julia`, `kali`, …) live on a plane you can drag and scroll. `view(x, y, zoom)` sets where it starts: the centre point on the plane and a zoom (bigger is closer). It's one setting for the sketch, on a line of its own, anywhere. Leave it out to start at the fractal's home view (listed below).
 - Effects in the *Light and lens* group each add a render pass: use a few, not ten.
+- Sketch line order: settings (`speed`, `view`), then variables and shaders, then layers bottom to top. Only layers draw.
 "
     );
 
     let _ = writeln!(w, "## Pictures\n\nStart a line with one of these.\n");
     for s in catalog::SPECS.iter().filter(|s| s.role == Role::Source && !s.hidden) {
         entry(w, s.name, s);
+        if let Some([x, y, z]) = s.home {
+            let _ = writeln!(w, "  - home view: `view({}, {}, {})`", catalog::fmt_num(x as f64), catalog::fmt_num(y as f64), catalog::fmt_num(z as f64));
+        }
     }
     for (title, pick) in [
         ("Shape and motion", (|r: Role| r == Role::Domain) as fn(Role) -> bool),
@@ -164,10 +170,11 @@ breathe(\"<dawn ember>\", sine.range(4, 9).slow(4)).pane().grain(.03)
 
 - A `picture` returns the colour at `uv` (0 to 1 across the frame, y up) as a `vec4f`. An `effect` returns the new colour and reads what's below with `pic(p)`.
 - A parameter's default sets its type: a number (or none, meaning 0) is an `f32`; a palette string is a `u32` read with `pal(colors, t)` or `palc(colors, i)`; a picture like `other = clouds()` is called as `other(uv)`.
-- Return `vec4f(rgb, 1.0)`, not a `vec3f`. Write float literals as `1.0`, not `1`, where the type matters.
+- Number parameters are always `f32`, palettes `u32`. Return `vec4f(rgb, 1.0)`, not a `vec3f`. Write float literals as `1.0`, not `1`, where the type matters; `let` is a constant, `var` a variable.
+- Animate with `u.cycle` (follows `speed()` and patterns) or `u.time`; both pause with the sketch.
 - The frame is `u`: {}.
 - Helper functions go in a `wgsl {{ … }}` block; every shader can call them.
-- Don't name a shader after a built-in (`glow`, `ripple`, `wave`, … are taken), and don't name parameters `uv`, `pic`, `u` or a WGSL keyword.
+- Don't name a shader after a built-in picture, effect, signal or function (every name in this document is taken: `glow`, `ripple`, `wave`…). That's an error: \"`glow` is a built-in name. Pick another\". Don't name parameters `uv`, `pic`, `u` or a WGSL keyword.
 
 In scope inside a shader:
 ",
@@ -186,7 +193,7 @@ In scope inside a shader:
 - Movement: animate one or two numbers with slow signals (`sine.range(a, b).slow(8)`), not everything at once.
 - Texture finishes a picture: `.grain(.03)`, `.canvas(.5)`, `.stipple(\"cobalt\")`, or `.brush()` to paint it.
 - Layers: a quiet base plus one accent on top with `.blend(\"screen\")` or `\"add\"` usually beats many layers.
-- Print looks: two-colour palettes (ink first, paper last) with `stipple` or `dither`.
+- Print looks: `stipple` maps dark to the first colour and light to the last, so a palette is inks then paper. Two inks on paper: `.stipple(\"#1d3fbb #e2553f #f4efe6\")` (or the built-in `\"riso\"`). One ink: `\"cobalt\"`. Feed it a calm monochrome picture (palette `\"mono\"`) for the cleanest print.
 
 ## Examples
 "

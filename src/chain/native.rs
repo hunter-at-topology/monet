@@ -570,8 +570,8 @@ pub const SHADER_NAMES: &[(&str, &str, &str)] = &[
 
 /// Fields of `u`.
 pub const UNIFORMS: &[(&str, &str)] = &[
-    ("time", "seconds since the sketch started"),
-    ("cycle", "cycles so far: time × speed(), what patterns and signals follow"),
+    ("time", "seconds at the default speed; follows speed() and pause"),
+    ("cycle", "cycles so far: what patterns and signals follow (u.time is cycle × 2)"),
     ("mouse", "the pointer, 0 to 1 (vec2f)"),
     ("res", "the canvas size in pixels (vec2f)"),
     ("dt", "seconds since the last frame"),
