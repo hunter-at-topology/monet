@@ -482,7 +482,12 @@ fn src_ship(uv: vec2f, b: u32, iters: f32) -> vec4f {
     for (var k = 1; k < 4; k++) { c += ship_at(b, aa4(p0, dx, dy, k) * flip, it); }
     return vec4f(c * 0.25, 1.0);
 }
-fn cpow(z: vec2f, n: f32) -> vec2f { let r = pow(length(z), n); let a = atan2(z.y, z.x) * n; return r * vec2f(cos(a), sin(a)); }
+/// z^n for real n. Every orbit starts at z = 0, where atan2(0, 0) is undefined in
+/// WGSL (NaN on some GPUs, which would freeze the whole orbit), so 0 is 0.
+fn cpow(z: vec2f, n: f32) -> vec2f {
+    if (all(z == vec2f(0.0))) { return vec2f(0.0); }
+    let r = pow(length(z), n); let a = atan2(z.y, z.x) * n; return r * vec2f(cos(a), sin(a));
+}
 fn cdiv(a: vec2f, b: vec2f) -> vec2f { return vec2f(a.x * b.x + a.y * b.y, a.y * b.x - a.x * b.y) / dot(b, b); }
 fn src_newton(uv: vec2f, b: u32, power: f32) -> vec4f {
     let pw = max(round(power), 2.0);
