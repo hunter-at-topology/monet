@@ -105,7 +105,7 @@ fn sections() -> Vec<Section> {
     vec![
         Section {
             title: "Pictures",
-            hint: "one per line, layered bottom to top",
+            hint: "",
             entries: catalog::SPECS
                 .iter()
                 .filter(|s| s.role == catalog::Role::Source && !s.hidden)
