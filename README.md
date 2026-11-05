@@ -263,6 +263,8 @@ Hover any name in the code to see its signature, defaults and description. Palet
 
 Press **⌘K** for the reference: every picture, effect, signal, function, pattern and palette, each with a one-line description. Type to search names and descriptions, press Return to insert the first match, or click any name to insert it.
 
+**For your agent:** the reference starts with **Copy agent skill**. It copies one Markdown document that teaches Claude, ChatGPT or any coding agent to write monet. It covers the language, every picture, effect, signal and palette with defaults, writing WGSL shaders, examples, and how to make a link that opens a sketch. It's generated from the catalog, so it's always current. It's also at [monet.hunterharloff.com/skill.md](https://monet.hunterharloff.com/skill.md), or run `monet skill`.
+
 ## The editor
 
 | | |

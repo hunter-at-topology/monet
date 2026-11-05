@@ -13,6 +13,8 @@ use crate::chain::{self, catalog};
 /// What the panel asks of the app this frame.
 pub enum Action {
     Insert(Insert),
+    /// Copy the agent skill (`crate::skill`) to the clipboard.
+    CopySkill,
     Close,
 }
 
@@ -294,6 +296,37 @@ pub fn show(ui: &mut Ui, query: &mut String, focus_search: &mut bool) -> Option<
     egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
         let width = ui.available_width() - 4.0;
         let mut any = false;
+        // for agents: everything monet knows, as one prompt to paste into Claude & co.
+        if matches(&q, &["agent", "skill", "claude", "chatgpt", "ai", "llm", "prompt", "copy"]) {
+            any = true;
+            heading(ui, "For your agent", "Claude, ChatGPT or any coding agent");
+            ui.horizontal(|ui| {
+                ui.add_space(8.0);
+                let b = egui::Frame::new()
+                    .fill(INK)
+                    .corner_radius(8.0)
+                    .inner_margin(egui::Margin::symmetric(12, 6))
+                    .show(ui, |ui| {
+                        ui.label(RichText::new("Copy agent skill").font(FontId::proportional(12.5)).color(PAPER))
+                    });
+                let r = ui
+                    .interact(b.response.rect, Id::unique("copy-skill"), Sense::click())
+                    .on_hover_cursor(egui::CursorIcon::PointingHand)
+                    .on_hover_text("the language, every picture, effect, signal and palette, WGSL shaders, examples, and how to make share links");
+                if r.clicked() {
+                    action = Some(Action::CopySkill);
+                }
+            });
+            ui.add_space(6.0);
+            ui.horizontal(|ui| {
+                ui.add_space(8.0);
+                ui.vertical(|ui| {
+                    ui.set_max_width(width - 16.0);
+                    ui.add(egui::Label::new(RichText::new("Paste it into your agent, then ask for a sketch. It answers with the code and a link that opens it here.").font(FontId::proportional(12.0)).color(MUTED)).wrap());
+                    ui.add(egui::Label::new(RichText::new(format!("Also at {}/skill.md", crate::skill::SITE.trim_start_matches("https://"))).font(FontId::proportional(11.5)).color(FAINT)).wrap());
+                });
+            });
+        }
         for s in sections() {
             let entries: Vec<_> = s.entries.into_iter().filter(|e| matches(&q, &[e.name, &e.doc])).collect();
             if entries.is_empty() {

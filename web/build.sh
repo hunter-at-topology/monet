@@ -28,6 +28,8 @@ else
 fi
 
 cp web/index.html web/og.jpg web/icon.png "$out/"
+# the agent skill, generated from the catalog: monet.hunterharloff.com/skill.md
+cargo run --release --quiet --bin monet -- skill > "$out/skill.md"
 # a content hash in the URLs, so a new deploy is never served from an old cache
 hash=$(cat "$out/monet.js" "$out/monet_bg.wasm" | shasum | cut -c1-10)
 mv "$out/monet.js" "$out/monet-$hash.js"

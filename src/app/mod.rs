@@ -1272,6 +1272,10 @@ impl App {
         match reference::show(ui, &mut self.ref_query, &mut self.ref_focus) {
             Some(reference::Action::Insert(what)) => self.insert(&ctx, what),
             Some(reference::Action::Close) => self.ref_open = false,
+            Some(reference::Action::CopySkill) => {
+                ctx.copy_text(crate::skill::text());
+                self.toast("agent skill copied");
+            }
             None => {}
         }
     }

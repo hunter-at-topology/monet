@@ -23,6 +23,7 @@ USAGE
   monet profile [all|NAME…] [--size WxH] [--frames N]
                                      GPU time per pass (timestamp queries), hottest first
   monet presets                      list the built-in sketches
+  monet skill                        print the agent skill (teach Claude or any agent to write monet)
 
 PRESETS
   monet:     lilies poppies sunrise rouen impression
@@ -45,6 +46,10 @@ pub fn main() -> ExitCode {
         Some("render") => cli(render(&args[1..])),
         Some("bench") => cli(bench(&args[1..])),
         Some("profile") => cli(profile(&args[1..])),
+        Some("skill") => {
+            print!("{}", monet::skill::text());
+            ExitCode::SUCCESS
+        }
         Some("presets") => {
             for p in presets::PRESETS {
                 let first = p
