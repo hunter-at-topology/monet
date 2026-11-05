@@ -1510,11 +1510,14 @@ impl App {
                     ui.set_width(w);
                     ui.spacing_mut().slider_width = w - 28.0;
                     ui.horizontal(|ui| {
+                        // a fractal with no sliders shows only where you are: call it that
+                        let title = if sliders.is_empty() { "view" } else { "sliders" };
                         let label = if self.params_open {
-                            "sliders"
+                            title.to_string()
                         } else {
-                            "sliders  ›"
+                            format!("{title}  ›")
                         };
+                        let label = label.as_str();
                         if text_button(ui, label, MUTED).clicked() {
                             self.params_open = !self.params_open;
                         }
@@ -1582,6 +1585,13 @@ impl App {
                             .color(FAINT),
                         )
                         .on_hover_text("scroll to zoom · drag to pan · double-click to reset");
+                        // say how, since nothing on screen suggests it
+                        let how = if cfg!(target_arch = "wasm32") && ui.ctx().content_rect().width() < NARROW {
+                            "pinch to zoom · drag to pan"
+                        } else {
+                            "scroll to zoom · drag to pan"
+                        };
+                        ui.label(RichText::new(how).font(FontId::proportional(11.0)).color(FAINT));
                     }
                 });
             });
